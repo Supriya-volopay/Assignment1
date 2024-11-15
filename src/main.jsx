@@ -12,6 +12,7 @@ const data = [
   { Company: 'Island Trading', Contact: 'Helen Bennett', Country: 'UK' },
   { Company: 'Laughing Bacchus Winecellars', Contact: 'Yoshi Tannamuri', Country: 'Canada' },
   { Company: 'Magazzini Alimentari Riuniti', Contact: 'Giovanni Rovelli', Country: 'Italy' },
+  { Company: 'Magazzini Alimentari Riuniti', Contact: 'Giovanni Rovelli', Country: 'Italy' },
 ];
 
 createRoot(document.getElementById('root')).render(
