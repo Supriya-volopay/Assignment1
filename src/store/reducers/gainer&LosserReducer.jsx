@@ -2,16 +2,16 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "./axios.jsx";
 import * as gainerLooserData from "../../data/topGainerLooser.json";
 
-let isMockEnable = true;
+let isMockEnable = false;
 
 // Create a shallow copy
 const mockData = { ...gainerLooserData };
 
 const intialStateData = {
     isLoading: false,
-    data: [],
-    top_gainer: [],
-    top_loser: [],
+    metadata: "",
+    topGainer: [],
+    topLoser: [],
     isError: null,
 }
 
@@ -19,13 +19,16 @@ const intialStateData = {
 export const fetchAPI = createAsyncThunk("fetchAPI", async (params, { dispatch }) => {
   try {
     if (isMockEnable) {
-      const mockedResponse = mockData; 
-      dispatch(setData(mockedResponse));
-      return mockedResponse;
+      dispatch(setMetadata(mockData.metadata));
+      dispatch(setGainer(mockData.top_gainers));
+      dispatch(setLoser(mockData.top_losers));
+
     } else {
       const response = await axios.get(""); 
-      dispatch(setData(response.data)); 
-      return response.data; 
+      dispatch(setMetadata(response.data?.metadata));
+      dispatch(setGainer(response.data?.top_gainers));
+      dispatch(setLoser(response.data?.top_losers));
+
     }
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -34,20 +37,20 @@ export const fetchAPI = createAsyncThunk("fetchAPI", async (params, { dispatch }
 });
 
 const GainerLooserSlice = createSlice({
-  name: "gainerLooser",
+  name: "gainersLosers",
   initialState: intialStateData,
   reducers: {
     setLoading : (state, action) => {
       state.isLoading = action.payload;
     },
-    setData : (state,action) => {
-      state.data = action.payload
+    setMetadata : (state, action) => {
+      state.metadata = action.payload;
     },
     setGainer : (state, action) => {
-      state.top_gainer = action.payload;
+      state.topGainer = action.payload;
     },
     setLoser : (state, action) => {
-      state.top_loser = action.payload;
+      state.topLoser = action.payload;
     },
     setError : (state, action) => {
       state.isError = action.payload;
@@ -56,6 +59,6 @@ const GainerLooserSlice = createSlice({
   
 });
 
-export const {setLoading, setGainer, setLoser, setError, setData} = GainerLooserSlice.actions;
+export const {setLoading, setMetadata, setGainer, setLoser, setError} = GainerLooserSlice.actions;
 
 export default GainerLooserSlice.reducer;
