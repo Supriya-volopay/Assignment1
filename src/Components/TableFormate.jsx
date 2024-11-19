@@ -6,7 +6,7 @@ const FormateTable = ({headerContent, headers, state}) => {
           <table className="w-5/6 border-collapse border border-gray-400">
             <thead>
               <tr>
-                {headerContent.map((header, index) => (
+                {headerContent?.map((header, index) => (
                   <th
                     key={index}
                     className="border border-gray-400 px-4 py-2 bg-white text-left font-medium text-gray-800"
@@ -17,7 +17,7 @@ const FormateTable = ({headerContent, headers, state}) => {
               </tr>
             </thead>
             <tbody>
-              {state.map(
+              {state?.map(
                   (row, rowIndex) => (
                     <tr
                       key={rowIndex}
