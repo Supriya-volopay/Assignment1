@@ -21,25 +21,24 @@ const Table = () => {
 
   const dispatch = useDispatch();
 
-  const state = useSelector((state) => state);
+  const {data,isLoading, isError} = useSelector((state) => state.GainerLooser);
 
   useEffect(() => {
     dispatch(fetchAPI());
-  }, [dispatch]);
-
-  console.log(state);
-  if (state.GainerLooser.isLoading) {
+  }, []);
+  
+  if (isLoading) {
     return <h1 className="text-4xl text-center">Loading....</h1>;
-  } else if (state.GainerLooser.isError) {
+  } else if (isError) {
     return <h1 className="text-4xl text-center">Something went wrong....</h1>;
-  } else if(state.GainerLooser.data?.data){
+  } else if(data){
     return (
       <>
         <h1 className="text-4xl text-center my-5">
-          {state.GainerLooser.data?.data?.metadata}
+          {data?.metadata}
         </h1>
-        <FormateTable headerContent={headerContent} headers = {headers} state={state.GainerLooser.data?.data?.top_losers} />
-        <FormateTable headerContent={headerContent} headers = {headers} state={state.GainerLooser.data?.data?.top_losers} />
+        <FormateTable headerContent={headerContent} headers={headers} state={data?.top_losers} />
+        <FormateTable headerContent={headerContent} headers={headers} state={data?.top_losers} />
       </>
     );
   }

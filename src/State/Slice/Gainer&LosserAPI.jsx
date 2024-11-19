@@ -1,37 +1,61 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "./axios.jsx";
+import * as gainerLooserData from "../../data/TopGainerLooser.json";
+
+let isMockEnable = true;
+
+// Create a shallow copy
+const mockData = { ...gainerLooserData };
+
+const intialStateData = {
+    isLoading: false,
+    data: [],
+    top_gainer: [],
+    top_loser: [],
+    isError: null,
+}
 
 // Action
-export const fetchAPI = createAsyncThunk("fetchAPI", async () => {
+export const fetchAPI = createAsyncThunk("fetchAPI", async (params, { dispatch }) => {
   try {
-    const response = await axios.get("");
-    return response;
+    if (isMockEnable) {
+      const mockedResponse = mockData; 
+      dispatch(setData(mockedResponse));
+      return mockedResponse;
+    } else {
+      const response = await axios.get(""); 
+      dispatch(setData(response.data)); 
+      return response.data; 
+    }
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching data:", error);
+    throw error;
   }
 });
 
 const GainerLooserSlice = createSlice({
   name: "gainerLooser",
-  initialState: {
-    isLoading: false,
-    data: null,
-    isError: false,
+  initialState: intialStateData,
+  reducers: {
+    setLoading : (state, action) => {
+      state.isLoading = action.payload;
+    },
+    setData : (state,action) => {
+      state.data = action.payload
+    },
+    setGainer : (state, action) => {
+      state.top_gainer = action.payload;
+    },
+    setLoser : (state, action) => {
+      state.top_loser = action.payload;
+    },
+    setError : (state, action) => {
+      state.isError = action.payload;
+    },
   },
-  reducers: {},
-  extraReducers: (builder) => {
-    builder.addCase(fetchAPI.pending, (state, action) => {
-      state.isLoading = true;
-    });
-    builder.addCase(fetchAPI.fulfilled, (state, action) => {
-      state.isLoading = false;
-      state.data = action.payload;
-    });
-    builder.addCase(fetchAPI.rejected, (state, action) => {
-      console.log("Error", action.payload);
-      state.isError = true;
-    });
-  },
+  
 });
+
+export const {setLoading, setGainer, setLoser, setError, setData} = GainerLooserSlice.actions;
 
 export default GainerLooserSlice.reducer;
