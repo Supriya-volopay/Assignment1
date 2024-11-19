@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAPI } from "../State/Slice/Gainer&LosserAPI";
-import FormateTable from './TableFormate';
+import { fetchAPI } from "../store/reducers/gainer&LosserReducer";
+import FormateTable from './tableFormate';
 
 const Table = () => {
   const headerContent = [
