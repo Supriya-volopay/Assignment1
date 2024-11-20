@@ -1,7 +1,7 @@
-const FormateTable = ({headerContent, headers, state}) => {
+const FormateTable = ({tableName, headerContent, headers, state}) => {
     return (
         <>
-        <h2 className="text-3xl text-center my-4">Top Gainer</h2>
+        <h2 className="text-3xl text-center my-4">{tableName}</h2>
         <div className="flex items-center justify-center my-8">
           <table className="w-5/6 border-collapse border border-gray-400">
             <thead>

@@ -42,8 +42,8 @@ const Table = () => {
         <h1 className="text-4xl text-center my-5">
           {metadata}
         </h1>
-        <FormateTable headerContent={headerContent} headers={headers} state={gainerData} />
-        <FormateTable headerContent={headerContent} headers={headers} state={loserData} />
+        <FormateTable tableName='Top Gainer' headerContent={headerContent} headers={headers} state={gainerData} />
+        <FormateTable tableName='Top Loser' headerContent={headerContent} headers={headers} state={loserData} />
       </>
     );
   }
