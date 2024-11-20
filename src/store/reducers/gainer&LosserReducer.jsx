@@ -1,10 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "./axios.jsx";
-import * as gainerLooserData from "../../data/topGainerLooser.json";
+import * as gainerLooserData from "../../data/topGainerLooser";
 
 let isMockEnable = false;
 
-// Create a shallow copy
+// Create a shallow copy of json
 const mockData = { ...gainerLooserData };
 
 const intialStateData = {
