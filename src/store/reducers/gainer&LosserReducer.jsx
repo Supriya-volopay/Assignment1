@@ -22,7 +22,6 @@ export const fetchAPI = createAsyncThunk("fetchAPI", async (params, { dispatch }
       dispatch(setMetadata(mockData.metadata));
       dispatch(setGainer(mockData.top_gainers));
       dispatch(setLoser(mockData.top_losers));
-
     } else {
       const response = await axios.get(""); 
       dispatch(setMetadata(response.data?.metadata));
