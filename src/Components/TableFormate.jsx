@@ -1,4 +1,8 @@
+import { useNavigate } from "react-router-dom";
+
+
 const FormateTable = ({tableName, headerContent, headers, state}) => {
+  const navigate = useNavigate();
     return (
         <>
         <h2 className="text-3xl text-center my-4">{tableName}</h2>
@@ -18,13 +22,13 @@ const FormateTable = ({tableName, headerContent, headers, state}) => {
             </thead>
             <tbody>
               {state?.map(
-                  (row, rowIndex) => (
-                    <tr
-                      key={rowIndex}
-                      className={
-                        rowIndex % 2 === 0 ? "bg-gray-200" : "bg-white"
-                      }
-                    >
+                (row, rowIndex) => (
+                  <tr
+                  key={rowIndex}
+                  className={rowIndex % 2 === 0 ? "bg-gray-200" : "bg-white"}
+                  style={{ display: "table-row", cursor: "pointer" }}
+                  onClick={() => navigate(`/company/${row?.ticker}`)}
+                >
                       {headers.map((header, colIndex) => (
                         <td
                           key={colIndex}
@@ -33,7 +37,7 @@ const FormateTable = ({tableName, headerContent, headers, state}) => {
                           {row[header]}
                         </td>
                       ))}
-                    </tr>
+                </tr>
                   )
                 )}
             </tbody>

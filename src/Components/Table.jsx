@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAPI } from "../store/reducers/gainer&LosserReducer";
+import { fetchGainerLooserAPI } from "../store/reducers/gainer&LosserReducer";
 import FormateTable from './TableFormate';
 import { gainerAndLoserErrorSelector, gainerAndLoserLoadingSelector, metadataSelector, gainerSelector, loserSelector } from "../store/selectors/gainAndLosersSelector";
 
@@ -29,7 +29,7 @@ const Table = () => {
   const isError = useSelector(gainerAndLoserErrorSelector)
   
   useEffect(() => {
-    dispatch(fetchAPI());
+    dispatch(fetchGainerLooserAPI());
   }, []);
   
   if (isLoading) {

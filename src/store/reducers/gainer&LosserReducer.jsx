@@ -1,8 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "./axios.jsx";
+import { GainerLooserAPI } from "./axios.jsx";
 import * as gainerLooserData from "../../data/topGainerLooser";
 
-let isMockEnable = false;
+let isMockEnable = true;
 
 // Create a shallow copy of json
 const mockData = { ...gainerLooserData };
@@ -16,17 +16,18 @@ const intialStateData = {
 }
 
 // Action
-export const fetchAPI = createAsyncThunk("fetchAPI", async (params, { dispatch }) => {
+export const fetchGainerLooserAPI = createAsyncThunk("fetchAPI", async (params, { dispatch }) => {
   try {
     if (isMockEnable) {
       dispatch(setMetadata(mockData.metadata));
       dispatch(setGainer(mockData.top_gainers));
       dispatch(setLoser(mockData.top_losers));
     } else {
-      const response = await axios.get(""); 
-      dispatch(setMetadata(response.data?.metadata));
-      dispatch(setGainer(response.data?.top_gainers));
-      dispatch(setLoser(response.data?.top_losers));
+      const response = await GainerLooserAPI.get(""); 
+      console.log(response);
+      dispatch(setMetadata(response?.data?.metadata));
+      dispatch(setGainer(response?.data?.top_gainers));
+      dispatch(setLoser(response?.data?.top_losers));
 
     }
   } catch (error) {
@@ -36,7 +37,7 @@ export const fetchAPI = createAsyncThunk("fetchAPI", async (params, { dispatch }
 });
 
 const GainerLooserSlice = createSlice({
-  name: "gainersLosers",
+  name: "gainersLosersSlice",
   initialState: intialStateData,
   reducers: {
     setLoading : (state, action) => {
