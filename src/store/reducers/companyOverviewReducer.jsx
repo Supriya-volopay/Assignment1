@@ -18,7 +18,7 @@ export const fetchCompanyOverviewAPI = createAsyncThunk("fetchCompanyOverviewAPI
         if (isMockEnable) {
             dispatch(setData(mockData));
         }else{
-            const response = await fetchCompanyOverview(param.slug);
+            const response = await fetchCompanyOverview(param.ticker);
             dispatch(setData(response));
         }
     } catch(error){

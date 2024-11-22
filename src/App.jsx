@@ -9,7 +9,7 @@ function App() {
        <BrowserRouter>
        <Routes>
         <Route path="/" element={<Table />}/>
-        <Route path="/company/:slug" element={<Company />}/>
+        <Route path="/company/:ticker" element={<Company />}/>
         <Route path="*" element={<Error />}/>
        </Routes>
        </BrowserRouter>

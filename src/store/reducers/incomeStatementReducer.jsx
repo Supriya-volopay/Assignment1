@@ -20,7 +20,7 @@ export const fetchIncomeStatementAPI = createAsyncThunk("fetchCompanyOverviewAPI
             dispatch(setAnnualReports(mockData.annualReports));
             dispatch(setQuarterlyReports(mockData.quarterlyReports));
         }else{
-            const response = await fetchIncomeStatement(param.slug);
+            const response = await fetchIncomeStatement(param.ticker);
             dispatch(setAnnualReports(response?.annualReports));
             dispatch(setQuarterlyReports(response?.quarterlyReports));
         }
