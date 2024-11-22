@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { fetchCompanyOverview } from "./axios.jsx";
-import * as companyOverview from "../../data/CompanyOverview.json";
+import * as companyOverview from "../../data/CompanyOverview";
 
 let isMockEnable = true;
 
