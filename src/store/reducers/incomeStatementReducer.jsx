@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { fetchIncomeStatement } from "./axios.jsx";
-import * as incomeStatement from "../../data/IncomeStatement";
+import * as incomeStatement from "../../data/incomeStatement.json";
 
 let isMockEnable = true;
 
