@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
-import Table from "./components/Table";
+import Table from "./Components/Table";
 import Company from "./components/Company";
 import Error from "./components/Error";
 

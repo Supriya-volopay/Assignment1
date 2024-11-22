@@ -35,8 +35,8 @@ const Company = () => {
   const incomeStatementLoading = useSelector(incomeStatementLoadingSelector);
   const incomeStatementError = useSelector(incomeStatementErrorSelector);
 
-  const xAxisData = annualReports.map((data) => data?.fiscalDateEnding) || [];
-  const yAxisData = annualReports.map((data) => data?.totalRevenue) || [];
+  const xAxisData = annualReports?.map((data) => data?.fiscalDateEnding) || [];
+  const yAxisData = annualReports?.map((data) => data?.totalRevenue) || [];
 
   const companyOverviewMap = [
     {
@@ -114,7 +114,7 @@ const Company = () => {
                 </p>
 
                 <div>
-                  {companyOverviewMap.map((data, index) => (
+                  {companyOverviewMap?.map((data, index) => (
                     <IconAndText data={data} key={index} />
                   ))}
                 </div>
