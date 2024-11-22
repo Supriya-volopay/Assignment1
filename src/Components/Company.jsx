@@ -16,6 +16,7 @@ import { fetchCompanyOverviewAPI } from "../store/reducers/companyOverviewReduce
 import { fetchIncomeStatementAPI } from "../store/reducers/incomeStatementReducer";
 import BarChart from "./BarChart";
 import logo from "../assets/img/logo/logo.png";
+import IconAndText from "./IconAndText";
 
 const Company = () => {
   const { id } = useParams();
@@ -37,10 +38,32 @@ const Company = () => {
   const xAxisData = annualReports.map((data) => data?.fiscalDateEnding) || [];
   const yAxisData = annualReports.map((data) => data?.totalRevenue) || [];
 
-  // Handle loading
+  const companyOverviewMap = [
+    {
+      icon: "fa-solid fa-location-dot pe-1",
+      text: companyOverviewData?.Address ?? "No address available",
+    },
+    {
+      icon: "fa-solid fa-dollar-sign pe-1",
+      text: companyOverviewData?.Currency ?? "No Currency avialable",
+    },
+    {
+      icon: "fa-solid fa-flag pe-1",
+      text: companyOverviewData?.Sector ?? "No Sector avialable",
+    },
+    {
+      icon: "fa-solid fa-earth-americas pe-1",
+      text: companyOverviewData?.OfficialSite ?? "No Site avialable",
+    },
+    {
+      icon: "fa-solid fa-signal pe-1",
+      text: companyOverviewData?.CIK ?? "No Data avialable",
+    },
+  ];
 
   return (
     <>
+      {/* Header */}
       <div className="flex justify-start items-center bg-slate-200">
         <div className="w-1/6 border-0 rounded-sm p-8">
           <img className="w-full overflow-hidden" src={logo} alt="logo" />
@@ -48,10 +71,12 @@ const Company = () => {
         <div className="w-5/6 flex justify-between items-center">
           <div>
             <span className="flex justify-start items-center">
-              <i className="fa-solid fa-building text-neutral-500"></i>
-              <h3 className="m-2 text-base text-neutral-500">
-                {companyOverviewData?.AssetType}
-              </h3>
+              <IconAndText
+                data={{
+                  icon: "fa-solid fa-building pe-1",
+                  text: companyOverviewData?.AssetType,
+                }}
+              />
             </span>
             <h2 className="text-2xl">{companyOverviewData?.Name}</h2>
           </div>
@@ -71,7 +96,9 @@ const Company = () => {
         </div>
       </div>
 
+      {/* Body */}
       <div className="flex justify-start items-center mt-8">
+        {/* Left Body */}
         {companyOverviewLoading ? (
           <div>Loading...</div>
         ) : companyOverviewError ? (
@@ -86,42 +113,10 @@ const Company = () => {
                     "No description available"}
                 </p>
 
-                <div className="flex justify-start items-center my-3 text-sm text-neutral-600">
-                  <i className="fa-solid fa-location-dot pe-1"></i>
-                  <p className="mx-1">
-                    {companyOverviewData?.Address ?? "No address available"}
-                  </p>
-                </div>
-
-                <div className="flex justify-start items-center my-3 text-sm text-neutral-600">
-                  <i className="fa-solid fa-dollar-sign pe-1"></i>
-                  <p className="mx-1">
-                    {companyOverviewData?.Currency ?? "No Currency avialable"}
-                  </p>
-                </div>
-
-                <div className="flex justify-start items-center my-3 text-sm text-neutral-600">
-                  <i className="fa-solid fa-flag pe-1"></i>
-                  <p className="mx-1">
-                    {companyOverviewData?.Sector ?? "No Sector avialable"}
-                  </p>
-                </div>
-
-                <div className="flex justify-start items-center my-3 text-sm text-neutral-600">
-                  <i className="fa-solid fa-earth-americas pe-1"></i>
-                  <p className="mx-1">
-                    {companyOverviewData?.OfficialSite ?? "No Site avialable"}
-                  </p>
-                  <a href={companyOverviewData?.OfficialSite} target="_blank">
-                    <i className="fa-solid fa-link"></i>
-                  </a>
-                </div>
-
-                <div className="flex justify-start items-center my-3 text-sm text-neutral-600">
-                  <i className="fa-solid fa-signal pe-1"></i>
-                  <p className="mx-1">
-                    {companyOverviewData?.CIK ?? "No Data avialable"}
-                  </p>
+                <div>
+                  {companyOverviewMap.map((data) => (
+                    <IconAndText data={data} />
+                  ))}
                 </div>
               </div>
             ) : companyOverviewError ? (
@@ -130,6 +125,7 @@ const Company = () => {
           </div>
         )}
 
+        {/* Right Body */}
         <div className="w-2/3 me-8">
           {incomeStatementLoading ? (
             <div>Loading...</div>

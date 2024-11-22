@@ -8,41 +8,44 @@ let isMockEnable = true;
 const mockData = { ...companyOverview };
 
 const intialStateData = {
-    isLoading: false,
-    data: [],
-    isError: null,
-}
-
-export const fetchCompanyOverviewAPI = createAsyncThunk("fetchCompanyOverviewAPI", async({param}, {dispatch}) => {
-    try {
-        if (isMockEnable) {
-            dispatch(setData(mockData));
-        }else{
-            const response = await fetchCompanyOverview(param.ticker);
-            dispatch(setData(response));
-        }
-    } catch(error){
-        console.log("Error fetching data:", error);
-        throw error;
-    }
-});
+  isLoading: false,
+  data: [],
+  isError: null,
+};
 
 const CompanyOverviewSlice = createSlice({
-    name : "companyOverviewSlice",
-    initialState : intialStateData,
-    reducers: {
-        setLoading : (state, action) => {
-            state.isLoading = action.payload;
-        },
-        setData : (state, action) => {
-            state.data = action.payload;
-        },
-        setError : (state, action) => {
-            state.isError = action.payload;
-        }
-    }
+  name: "companyOverviewSlice",
+  initialState: intialStateData,
+  reducers: {
+    setLoading: (state, action) => {
+      state.isLoading = action.payload;
+    },
+    setData: (state, action) => {
+      state.data = action.payload;
+    },
+    setError: (state, action) => {
+      state.isError = action.payload;
+    },
+  },
 });
 
-export const {setLoading, setData, setError} = CompanyOverviewSlice.actions;
+export const fetchCompanyOverviewAPI = createAsyncThunk(
+  "fetchCompanyOverviewAPI",
+  async ({ param }, { dispatch }) => {
+    try {
+      if (isMockEnable) {
+        dispatch(setData(mockData));
+      } else {
+        const response = await fetchCompanyOverview(param.ticker);
+        dispatch(setData(response));
+      }
+    } catch (error) {
+      console.log("Error fetching data:", error);
+      throw error;
+    }
+  }
+);
+
+export const { setLoading, setData, setError } = CompanyOverviewSlice.actions;
 
 export default CompanyOverviewSlice.reducer;
