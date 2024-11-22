@@ -14,9 +14,9 @@ import {
 import { useParams } from "react-router-dom";
 import { fetchCompanyOverviewAPI } from "../store/reducers/companyOverviewReducer";
 import { fetchIncomeStatementAPI } from "../store/reducers/incomeStatementReducer";
-import BarChart from "./BarChart";
+import BarChart from "./core/BarChart";
 import logo from "../assets/img/logo/logo.png";
-import IconAndText from "./IconAndText";
+import IconAndText from "./core/IconAndText";
 
 const Company = () => {
   const { id } = useParams();
@@ -114,8 +114,8 @@ const Company = () => {
                 </p>
 
                 <div>
-                  {companyOverviewMap.map((data) => (
-                    <IconAndText data={data} />
+                  {companyOverviewMap.map((data, index) => (
+                    <IconAndText data={data} key={index} />
                   ))}
                 </div>
               </div>
