@@ -1,8 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 import Table from "./Components/Table";
-import Company from "./components/Company";
-import Error from "./components/Error";
+import Company from "./Components/Company";
+import Error from "./Components/Error";
 
 function App() {
   return (
