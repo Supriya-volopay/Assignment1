@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { GainerLooserAPI } from "./axios.jsx";
-import * as gainerLooserData from "../../data/topGainerLooser";
+import * as gainerLooserData from "../../data/TopGainerLooser.json";
 
 let isMockEnable = true;
 
