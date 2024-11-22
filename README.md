@@ -9,3 +9,6 @@ Currently, two official plugins are available:
 
 Netlify Link
 - https://supriya-assignment1.netlify.app/
+
+- Render Link
+- https://volopay-assignment.onrender.com
