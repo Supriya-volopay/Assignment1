@@ -1,10 +1,19 @@
-import './App.css'
-import Table from './Components/Table';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import "./App.css";
+import Table from "./Components/Table";
+import Company from "./components/Company";
+import Error from "./components/Error";
 
 function App() {
-    return(
-        <Table />
-    );
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Table />} />
+        <Route path="/company/:ticker" element={<Company />} />
+        <Route path="*" element={<Error />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
 export default App;

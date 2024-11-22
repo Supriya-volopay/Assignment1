@@ -1,6 +1,6 @@
 import { createSelector } from "@reduxjs/toolkit";
 
-export const gainerLoserStore = (store) => store.gainersLosers  //name of the slice
+export const gainerLoserStore = (store) => store.gainersLosersSlice  //name of the slice
 
 export const gainerAndLoserLoadingSelector = createSelector(
     gainerLoserStore,
