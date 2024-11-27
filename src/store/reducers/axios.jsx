@@ -38,3 +38,16 @@ export const fetchProducts = (skip, limit) => {
     },
   });
 };
+
+export const fetchCategories = () => {
+  return axios.get(`${apiUrl2}/products/categories`);
+};
+
+export const fetchCategoriesProduct = (category, limit, skip) => {
+  return axios.get(`${apiUrl2}/products/category/${category}`, {
+    params: {
+      limit: limit,
+      skip: skip,
+    },
+  });
+};

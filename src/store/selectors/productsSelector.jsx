@@ -26,3 +26,13 @@ export const productsPagesSelector = createSelector(
   productsStore,
   (products) => products.pagination
 );
+
+export const categoriesSelector = createSelector(
+  productsStore,
+  (products) => products.categories
+);
+
+export const selectedCategoriesSelector = createSelector(
+  productsStore,
+  (products) => products.selectedCategories
+);
