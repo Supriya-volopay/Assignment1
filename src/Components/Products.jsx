@@ -56,10 +56,16 @@ const Products = () => {
   });
 
   useEffect(() => {
-    if (pages.skip <= totalProducts && !Object.keys(params)?.length) {
+    // console.log(bottomInView);
+
+    if (
+      bottomInView &&
+      pages.skip <= totalProducts &&
+      !Object.keys(params)?.length
+    ) {
       dispatch(setLoading(true));
       const timeoutId = setTimeout(() => {
-        dispatch(fetchProductsAPI({ skip: pages.skip }));
+        dispatch(fetchProductsAPI({ skip: pages.skip, limit: pages.limit }));
         dispatch(setPagination(pages.skip));
         searchParams.set("skip", pages.skip);
         setSearchParams(searchParams);
@@ -74,8 +80,9 @@ const Products = () => {
   }, []);
 
   useEffect(() => {
-    if (!productsLoading && pages.skip <= totalProducts && selectedCategory) {
+    if (pages.skip <= totalProducts && selectedCategory) {
       dispatch(setLoading(true));
+      //UI is working well but beacuse of bottomInView this api calls 2 time, cause bottomInView changes its value 2 times
       const timeoutId = setTimeout(() => {
         dispatch(
           fetchProductByCategoriesAPI({
@@ -84,11 +91,13 @@ const Products = () => {
             limit: pages.limit,
           })
         );
-        dispatch(setPagination(pages.skip));
+        if (bottomInView) {
+          dispatch(setPagination(pages.skip));
+        }
         searchParams.set("skip", pages.skip);
         setSearchParams(searchParams);
         dispatch(setLoading(false));
-      }, 100);
+      }, 500);
       return () => clearTimeout(timeoutId);
     }
   }, [bottomInView, selectedCategory]);
@@ -135,9 +144,11 @@ const Products = () => {
             click={false}
           />
           <div ref={bottomRef} className="h-12 my-5 text-center">
-            {pages.skip >= totalProducts ? "No More Products" : null}
+            {pages.skip >= totalProducts && products?.id == totalProducts
+              ? "No More Products"
+              : null}
             {productsLoading ? <Loading /> : null}
-            {!productsLoading ? "Load more..." : null}
+            {!productsLoading && products?.length ? "Load more..." : null}
           </div>
         </div>
       </div>

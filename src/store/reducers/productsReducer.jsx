@@ -50,14 +50,14 @@ const ProductsSlice = createSlice({
 
 export const fetchProductsAPI = createAsyncThunk(
   "fetchProductsAPI",
-  async ({ skip }, { dispatch }) => {
+  async ({ skip, limit }, { dispatch }) => {
     try {
-      const response = await fetchProducts(
-        skip,
-        intialStateData.pagination.limit
-      );
-      if (skip === 0) dispatch(setProducts(response?.data?.products));
-      else dispatch(appendProducts(response?.data?.products));
+      const response = await fetchProducts(skip, limit);
+      if (skip === 0) {
+        dispatch(setProducts(response?.data?.products));
+      } else {
+        dispatch(appendProducts(response?.data?.products));
+      }
       dispatch(setTotalProducts(response?.data?.total));
     } catch (error) {
       console.log("Error fetching data:", error);
@@ -83,10 +83,14 @@ export const fetchProductByCategoriesAPI = createAsyncThunk(
   "fetchProductByCategoriesAPI",
   async ({ skip, category, limit }, { dispatch }) => {
     try {
+      console.log(skip);
+
       const response = await fetchCategoriesProduct(category, skip, limit);
       if (skip === 0) {
         dispatch(setProducts(response?.data?.products));
-      } else dispatch(appendProducts(response?.data?.products));
+      } else {
+        dispatch(appendProducts(response?.data?.products));
+      }
       dispatch(setTotalProducts(response?.data?.total));
     } catch (error) {
       console.log("Error fetching data:", error);
