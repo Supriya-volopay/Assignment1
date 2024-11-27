@@ -56,8 +56,6 @@ const Products = () => {
   });
 
   useEffect(() => {
-    // console.log(bottomInView);
-
     if (
       bottomInView &&
       pages.skip <= totalProducts &&
@@ -144,11 +142,11 @@ const Products = () => {
             click={false}
           />
           <div ref={bottomRef} className="h-12 my-5 text-center">
-            {pages.skip >= totalProducts && products?.id == totalProducts
-              ? "No More Products"
-              : null}
+            {pages.skip >= totalProducts ? "No More Products" : null}
             {productsLoading ? <Loading /> : null}
-            {!productsLoading && products?.length ? "Load more..." : null}
+            {!productsLoading && pages.skip < totalProducts
+              ? "Load more..."
+              : null}
           </div>
         </div>
       </div>

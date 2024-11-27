@@ -83,8 +83,6 @@ export const fetchProductByCategoriesAPI = createAsyncThunk(
   "fetchProductByCategoriesAPI",
   async ({ skip, category, limit }, { dispatch }) => {
     try {
-      console.log(skip);
-
       const response = await fetchCategoriesProduct(category, skip, limit);
       if (skip === 0) {
         dispatch(setProducts(response?.data?.products));
