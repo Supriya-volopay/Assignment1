@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchGainerLooserAPI } from "../store/reducers/gainer&LosserReducer";
-import FormateTable from "./core/TableFormate";
+import FormateTable from "./core/TableFormat";
 import {
   gainerAndLoserErrorSelector,
   gainerAndLoserLoadingSelector,

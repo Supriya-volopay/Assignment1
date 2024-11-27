@@ -14,14 +14,12 @@ import {
   categoriesSelector,
   selectedCategorySelector,
 } from "../store/selectors/productsSelector";
-import FormateTable from "./core/TableFormate";
+import FormateTable from "./core/TableFormat";
 import { useInView } from "react-intersection-observer";
 import {
   setLoading,
   setPagination,
   setSelectedCategory,
-  setProducts,
-  setTotalProducts,
 } from "../store/reducers/productsReducer";
 import { useParams, useSearchParams } from "react-router-dom";
 import Loading from "../Components/core/Loading";
@@ -78,7 +76,11 @@ const Products = () => {
   }, []);
 
   useEffect(() => {
+    if (!selectedCategory) {
+      navigate(`/products?limit=${pages.limit}&skip=0`);
+    }
     if (pages.skip <= totalProducts && selectedCategory) {
+      console.log(params?.category);
       dispatch(setLoading(true));
       //UI is working well but beacuse of bottomInView this api calls 2 time, cause bottomInView changes its value 2 times
       const timeoutId = setTimeout(() => {
@@ -142,7 +144,9 @@ const Products = () => {
             click={false}
           />
           <div ref={bottomRef} className="h-12 my-5 text-center">
-            {pages.skip >= totalProducts ? "No More Products" : null}
+            {!productsLoading && pages.skip >= totalProducts
+              ? "No More Products"
+              : null}
             {productsLoading ? <Loading /> : null}
             {!productsLoading && pages.skip < totalProducts
               ? "Load more..."
