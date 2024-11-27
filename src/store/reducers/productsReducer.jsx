@@ -56,7 +56,8 @@ export const fetchProductsAPI = createAsyncThunk(
         skip,
         intialStateData.pagination.limit
       );
-      dispatch(appendProducts(response?.data?.products));
+      if (skip === 0) dispatch(setProducts(response?.data?.products));
+      else dispatch(appendProducts(response?.data?.products));
       dispatch(setTotalProducts(response?.data?.total));
     } catch (error) {
       console.log("Error fetching data:", error);
@@ -83,8 +84,9 @@ export const fetchProductByCategoriesAPI = createAsyncThunk(
   async ({ skip, category, limit }, { dispatch }) => {
     try {
       const response = await fetchCategoriesProduct(category, skip, limit);
-      dispatch(setProducts([]));
-      dispatch(appendProducts(response?.data?.products));
+      if (skip === 0) {
+        dispatch(setProducts(response?.data?.products));
+      } else dispatch(appendProducts(response?.data?.products));
       dispatch(setTotalProducts(response?.data?.total));
     } catch (error) {
       console.log("Error fetching data:", error);

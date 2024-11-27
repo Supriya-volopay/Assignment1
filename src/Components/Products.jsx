@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchProductsAPI,
@@ -23,33 +23,25 @@ import {
   setProducts,
   setTotalProducts,
 } from "../store/reducers/productsReducer";
-import { useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import Loading from "../Components/core/Loading";
 import ButtonWithIcon from "./core/ButtonWithIcon";
 import { useNavigate } from "react-router-dom";
 
+const headerContent = ["Product Name", "Category", "Price", "Rating", "Stock"];
+const headers = ["title", "category", "price", "rating", "stock"];
+
+const categoriesConfig = {
+  beauty: { icon: "GiLipstick", color: "pink" },
+  fragrances: { icon: "GiBrandyBottle", color: "#e8e829" },
+  furniture: { icon: "GiBed", color: "#d08484" },
+  groceries: { icon: "FaShoppingBag", color: "#9191cf" },
+  "home-decoration": { icon: "FaHome", color: "#6fc26f" },
+};
 const Products = () => {
-  const headerContent = [
-    "Product Name",
-    "Category",
-    "Price",
-    "Rating",
-    "Stock",
-  ];
-  const headers = ["title", "category", "price", "rating", "stock"];
-
-  const categoriesConfig = {
-    beauty: { icon: "GiLipstick", color: "pink" },
-    fragrances: { icon: "GiBrandyBottle", color: "#e8e829" },
-    furniture: { icon: "GiBed", color: "#d08484" },
-    groceries: { icon: "FaShoppingBag", color: "#9191cf" },
-    "home-decoration": { icon: "FaHome", color: "#6fc26f" },
-  };
-
   const dispatch = useDispatch();
-
+  const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
-
   const products = useSelector(productsSelector);
   const totalProducts = useSelector(totalProductsSelector);
   const productsLoading = useSelector(productsLoadingSelector);
@@ -64,7 +56,7 @@ const Products = () => {
   });
 
   useEffect(() => {
-    if (bottomInView && !productsLoading && pages.skip <= totalProducts) {
+    if (pages.skip <= totalProducts && !Object.keys(params)?.length) {
       dispatch(setLoading(true));
       const timeoutId = setTimeout(() => {
         dispatch(fetchProductsAPI({ skip: pages.skip }));
@@ -75,17 +67,14 @@ const Products = () => {
       }, 500);
       return () => clearTimeout(timeoutId);
     }
-  }, [bottomInView]);
+  }, [bottomInView, selectedCategory, params?.category]);
 
   useEffect(() => {
     dispatch(fetchCategoriesAPI());
   }, []);
 
   useEffect(() => {
-    console.log(productsLoading, pages.skip, totalProducts, selectedCategory);
-
     if (!productsLoading && pages.skip <= totalProducts && selectedCategory) {
-      console.log(selectedCategory);
       dispatch(setLoading(true));
       const timeoutId = setTimeout(() => {
         dispatch(
@@ -133,6 +122,7 @@ const Products = () => {
                 key={index}
                 config={categoriesConfig[item?.slug]}
                 item={item}
+                isActive={params?.category === item?.slug}
                 clickButton={() => clickOnCategories(item?.slug)}
               />
             ))}
@@ -145,17 +135,9 @@ const Products = () => {
             click={false}
           />
           <div ref={bottomRef} className="h-12 my-5 text-center">
-            {pages.skip >= totalProducts ? (
-              "No More Products"
-            ) : productsLoading ? (
-              <Loading />
-            ) : (
-              "Load more..."
-            )}
-
-            {/* {pages.skip >= totalProducts ? "No More Products" : null}
+            {pages.skip >= totalProducts ? "No More Products" : null}
             {productsLoading ? <Loading /> : null}
-            {!productsLoading ? "Load more..." : null} */}
+            {!productsLoading ? "Load more..." : null}
           </div>
         </div>
       </div>
