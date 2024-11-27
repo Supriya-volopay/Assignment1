@@ -11,7 +11,7 @@ const intialStateData = {
   totalProduct: 0,
   pagination: { limit: 15, skip: 0, pageNo: 0 },
   categories: [],
-  selectedCategories: null,
+  selectedCategory: null,
   isError: null,
 };
 
@@ -28,9 +28,6 @@ const ProductsSlice = createSlice({
     appendProducts: (state, action) => {
       state.products = [...state.products, ...action.payload];
     },
-    resetProduct: (state, action) => {
-      state.products = action.payload;
-    },
     setPagination: (state, action) => {
       state.pagination.skip = action.payload + state.pagination.limit;
       state.pagination.pageNo = state.pagination.skip / state.pagination.limit;
@@ -41,8 +38,9 @@ const ProductsSlice = createSlice({
     setCategories: (state, action) => {
       state.categories = action.payload;
     },
-    selectedCategories: (state, action) => {
-      state.selectedCategories = action.payload;
+    setSelectedCategory: (state, action) => {
+      state.selectedCategory = action.payload;
+      state.pagination.skip = 0;
     },
     setError: (state, action) => {
       state.isError = action.payload;
@@ -82,14 +80,10 @@ export const fetchCategoriesAPI = createAsyncThunk(
 
 export const fetchProductByCategoriesAPI = createAsyncThunk(
   "fetchProductByCategoriesAPI",
-  async ({ skip, category }, { dispatch }) => {
+  async ({ skip, category, limit }, { dispatch }) => {
     try {
-      const response = await fetchCategoriesProduct(
-        category,
-        skip,
-        intialStateData.pagination.limit
-      );
-      dispatch(resetProduct([]));
+      const response = await fetchCategoriesProduct(category, skip, limit);
+      dispatch(setProducts([]));
       dispatch(appendProducts(response?.data?.products));
       dispatch(setTotalProducts(response?.data?.total));
     } catch (error) {
@@ -105,10 +99,9 @@ export const {
   setError,
   setTotalProducts,
   appendProducts,
-  resetProduct,
   setPagination,
   setCategories,
-  selectedCategories,
+  setSelectedCategory,
 } = ProductsSlice.actions;
 
 export default ProductsSlice.reducer;

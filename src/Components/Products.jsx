@@ -12,15 +12,16 @@ import {
   totalProductsSelector,
   productsPagesSelector,
   categoriesSelector,
-  selectedCategoriesSelector,
+  selectedCategorySelector,
 } from "../store/selectors/productsSelector";
 import FormateTable from "./core/TableFormate";
 import { useInView } from "react-intersection-observer";
 import {
   setLoading,
   setPagination,
-  resetProduct,
-  selectedCategories,
+  setSelectedCategory,
+  setProducts,
+  setTotalProducts,
 } from "../store/reducers/productsReducer";
 import { useSearchParams } from "react-router-dom";
 import Loading from "../Components/core/Loading";
@@ -48,7 +49,6 @@ const Products = () => {
   const dispatch = useDispatch();
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const [resetProduct, setresetProduct] = useState(true);
 
   const products = useSelector(productsSelector);
   const totalProducts = useSelector(totalProductsSelector);
@@ -56,7 +56,7 @@ const Products = () => {
   const productsError = useSelector(productsErrorSelector);
   const pages = useSelector(productsPagesSelector);
   const categories = useSelector(categoriesSelector);
-  const selectedCategory = useSelector(selectedCategoriesSelector);
+  const selectedCategory = useSelector(selectedCategorySelector);
 
   const { ref: bottomRef, inView: bottomInView } = useInView({
     threshold: 1,
@@ -64,12 +64,7 @@ const Products = () => {
   });
 
   useEffect(() => {
-    if (
-      resetProduct &&
-      bottomInView &&
-      !productsLoading &&
-      pages.skip <= totalProducts
-    ) {
+    if (bottomInView && !productsLoading && pages.skip <= totalProducts) {
       dispatch(setLoading(true));
       const timeoutId = setTimeout(() => {
         dispatch(fetchProductsAPI({ skip: pages.skip }));
@@ -87,35 +82,38 @@ const Products = () => {
   }, []);
 
   useEffect(() => {
-    if (bottomInView && !productsLoading && pages.skip <= totalProducts) {
+    console.log(productsLoading, pages.skip, totalProducts, selectedCategory);
+
+    if (!productsLoading && pages.skip <= totalProducts && selectedCategory) {
+      console.log(selectedCategory);
       dispatch(setLoading(true));
       const timeoutId = setTimeout(() => {
         dispatch(
           fetchProductByCategoriesAPI({
             skip: pages.skip,
-            category: selectedCategories,
+            category: selectedCategory,
+            limit: pages.limit,
           })
         );
         dispatch(setPagination(pages.skip));
         searchParams.set("skip", pages.skip);
         setSearchParams(searchParams);
         dispatch(setLoading(false));
-      }, 500);
+      }, 100);
       return () => clearTimeout(timeoutId);
     }
-  }, [selectedCategory]);
+  }, [bottomInView, selectedCategory]);
 
   const navigate = useNavigate();
 
   const reset = () => {
-    dispatch(selectedCategories(null));
+    dispatch(setSelectedCategory(null));
     navigate(`/products?limit=${pages.limit}&skip=0`);
-    console.log("abv");
   };
 
   const clickOnCategories = (category) => {
-    dispatch(selectedCategories(category));
-    console.log(selectedCategory);
+    dispatch(setSelectedCategory(category));
+    navigate(`/products/${category}?limit=${pages.limit}&skip=${pages.skip}`);
   };
 
   if (productsError) {

@@ -12,6 +12,7 @@ function App() {
         <Route path="/" element={<Table />} />
         <Route path="/company/:ticker" element={<Company />} />
         <Route path="/products" element={<Products />} />
+        <Route path="/products/:category" element={<Products />} />
         <Route path="*" element={<Error />} />
       </Routes>
     </BrowserRouter>

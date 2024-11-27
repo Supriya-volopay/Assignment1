@@ -32,7 +32,7 @@ export const categoriesSelector = createSelector(
   (products) => products.categories
 );
 
-export const selectedCategoriesSelector = createSelector(
+export const selectedCategorySelector = createSelector(
   productsStore,
-  (products) => products.selectedCategories
+  (products) => products.selectedCategory
 );
