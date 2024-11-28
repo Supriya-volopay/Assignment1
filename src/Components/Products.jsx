@@ -21,7 +21,7 @@ import {
   setPagination,
   setSelectedCategory,
 } from "../store/reducers/productsReducer";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import Loading from "../Components/core/Loading";
 import ButtonWithIcon from "./core/ButtonWithIcon";
 import { useNavigate } from "react-router-dom";
@@ -36,9 +36,9 @@ const categoriesConfig = {
   groceries: { icon: "FaShoppingBag", color: "#9191cf" },
   "home-decoration": { icon: "FaHome", color: "#6fc26f" },
 };
+
 const Products = () => {
   const dispatch = useDispatch();
-  const params = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const products = useSelector(productsSelector);
   const totalProducts = useSelector(totalProductsSelector);
@@ -54,64 +54,58 @@ const Products = () => {
   });
 
   useEffect(() => {
-    if (
-      bottomInView &&
-      pages.skip <= totalProducts &&
-      !Object.keys(params)?.length
-    ) {
-      dispatch(setLoading(true));
-      const timeoutId = setTimeout(() => {
-        dispatch(fetchProductsAPI({ skip: pages.skip, limit: pages.limit }));
-        dispatch(setPagination(pages.skip));
-        searchParams.set("skip", pages.skip);
-        setSearchParams(searchParams);
-        dispatch(setLoading(false));
-      }, 500);
-      return () => clearTimeout(timeoutId);
-    }
-  }, [bottomInView, selectedCategory, params?.category]);
-
-  useEffect(() => {
     dispatch(fetchCategoriesAPI());
   }, []);
 
   useEffect(() => {
-    if (!selectedCategory) {
-      navigate(`/products?limit=${pages.limit}&skip=0`);
+    const categoryParam = searchParams.get("category");
+
+    if (selectedCategory && categoryParam !== selectedCategory) {
+      searchParams.set("category", selectedCategory);
+      setSearchParams(searchParams);
     }
-    if (pages.skip <= totalProducts && selectedCategory) {
-      console.log(params?.category);
+
+    const shouldFetchByCategory =
+      categoryParam && categoryParam !== "null" && pages.skip <= totalProducts;
+
+    const shouldFetchProducts =
+      bottomInView && pages.skip <= totalProducts && categoryParam === "null";
+
+    if (shouldFetchByCategory || shouldFetchProducts) {
       dispatch(setLoading(true));
-      //UI is working well but beacuse of bottomInView this api calls 2 time, cause bottomInView changes its value 2 times
+
       const timeoutId = setTimeout(() => {
-        dispatch(
-          fetchProductByCategoriesAPI({
-            skip: pages.skip,
-            category: selectedCategory,
-            limit: pages.limit,
-          })
-        );
-        if (bottomInView) {
-          dispatch(setPagination(pages.skip));
+        if (shouldFetchByCategory) {
+          dispatch(
+            fetchProductByCategoriesAPI({
+              skip: pages.skip,
+              category: categoryParam,
+              limit: pages.limit,
+            })
+          );
+          if (bottomInView) {
+            dispatch(setPagination(pages.skip));
+          }
+        } else if (shouldFetchProducts) {
+          dispatch(fetchProductsAPI({ skip: pages.skip, limit: pages.limit }));
         }
-        searchParams.set("skip", pages.skip);
-        setSearchParams(searchParams);
+
         dispatch(setLoading(false));
-      }, 500);
+      }, 100);
+
       return () => clearTimeout(timeoutId);
     }
-  }, [bottomInView, selectedCategory]);
+  }, [bottomInView, selectedCategory, searchParams]);
 
   const navigate = useNavigate();
 
   const reset = () => {
     dispatch(setSelectedCategory(null));
-    navigate(`/products?limit=${pages.limit}&skip=0`);
+    navigate(`/products?category=null`);
   };
 
   const clickOnCategories = (category) => {
     dispatch(setSelectedCategory(category));
-    navigate(`/products/${category}?limit=${pages.limit}&skip=${pages.skip}`);
   };
 
   if (productsError) {
@@ -131,7 +125,7 @@ const Products = () => {
                 key={index}
                 config={categoriesConfig[item?.slug]}
                 item={item}
-                isActive={params?.category === item?.slug}
+                isActive={searchParams.get("category") === item?.slug}
                 clickButton={() => clickOnCategories(item?.slug)}
               />
             ))}

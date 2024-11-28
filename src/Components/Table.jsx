@@ -9,7 +9,7 @@ import {
   gainerSelector,
   loserSelector,
 } from "../store/selectors/gainAndLosersSelector";
-import { productsPagesSelector } from "../store/selectors/productsSelector";
+import { selectedCategorySelector } from "../store/selectors/productsSelector";
 import { useNavigate } from "react-router-dom";
 
 const Table = () => {
@@ -35,7 +35,7 @@ const Table = () => {
   const loserData = useSelector(loserSelector);
   const isLoading = useSelector(gainerAndLoserLoadingSelector);
   const isError = useSelector(gainerAndLoserErrorSelector);
-  const pages = useSelector(productsPagesSelector);
+  const category = useSelector(selectedCategorySelector);
 
   useEffect(() => {
     dispatch(fetchGainerLooserAPI());
@@ -44,9 +44,7 @@ const Table = () => {
   const navigate = useNavigate();
 
   const goToProducts = () => {
-    const limit = pages.limit;
-    const skip = pages.skip;
-    navigate(`/products?limit=${limit}&skip=${skip}`);
+    navigate(`/products?category=${category}`);
   };
 
   if (isLoading) {
