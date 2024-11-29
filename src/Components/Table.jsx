@@ -44,7 +44,7 @@ const Table = () => {
   const navigate = useNavigate();
 
   const goToProducts = () => {
-    navigate(`/products?category=${category}`);
+    navigate(`/products`);
   };
 
   if (isLoading) {

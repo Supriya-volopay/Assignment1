@@ -25,21 +25,22 @@ import { useSearchParams } from "react-router-dom";
 import Loading from "../Components/core/Loading";
 import ButtonWithIcon from "./core/ButtonWithIcon";
 import { useNavigate } from "react-router-dom";
+import { searchParams } from "../constants/searchParams";
 
 const headerContent = ["Product Name", "Category", "Price", "Rating", "Stock"];
 const headers = ["title", "category", "price", "rating", "stock"];
 
 const categoriesConfig = {
-  beauty: { icon: "GiLipstick", color: "pink" },
-  fragrances: { icon: "GiBrandyBottle", color: "#e8e829" },
-  furniture: { icon: "GiBed", color: "#d08484" },
-  groceries: { icon: "FaShoppingBag", color: "#9191cf" },
-  "home-decoration": { icon: "FaHome", color: "#6fc26f" },
+  beauty: { icon: "GiLipstick", color: "bg-pink-400" },
+  fragrances: { icon: "GiBrandyBottle", color: "bg-amber-400" },
+  furniture: { icon: "GiBed", color: "bg-orange-400" },
+  groceries: { icon: "FaShoppingBag", color: "bg-violet-500" },
+  "home-decoration": { icon: "FaHome", color: "bg-lime-500" },
 };
 
 const Products = () => {
   const dispatch = useDispatch();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParam, setSearchParam] = useSearchParams();
   const products = useSelector(productsSelector);
   const totalProducts = useSelector(totalProductsSelector);
   const productsLoading = useSelector(productsLoadingSelector);
@@ -57,19 +58,18 @@ const Products = () => {
     dispatch(fetchCategoriesAPI());
   }, []);
 
-  useEffect(() => {
-    const categoryParam = searchParams.get("category");
+  const categoryParam = searchParam.get(searchParams.CATEGORY);
 
+  useEffect(() => {
     if (selectedCategory && categoryParam !== selectedCategory) {
-      searchParams.set("category", selectedCategory);
-      setSearchParams(searchParams);
+      searchParam.set(searchParams.CATEGORY, selectedCategory);
+      setSearchParam(searchParam);
     }
 
-    const shouldFetchByCategory =
-      categoryParam && categoryParam !== "null" && pages.skip <= totalProducts;
+    const shouldFetchByCategory = categoryParam && pages.skip <= totalProducts;
 
     const shouldFetchProducts =
-      bottomInView && pages.skip <= totalProducts && categoryParam === "null";
+      !categoryParam && bottomInView && pages.skip <= totalProducts;
 
     if (shouldFetchByCategory || shouldFetchProducts) {
       dispatch(setLoading(true));
@@ -83,25 +83,25 @@ const Products = () => {
               limit: pages.limit,
             })
           );
-          if (bottomInView) {
-            dispatch(setPagination(pages.skip));
-          }
         } else if (shouldFetchProducts) {
           dispatch(fetchProductsAPI({ skip: pages.skip, limit: pages.limit }));
         }
-
+        if (bottomInView) {
+          dispatch(setPagination(pages.skip));
+        }
         dispatch(setLoading(false));
       }, 100);
 
       return () => clearTimeout(timeoutId);
     }
-  }, [bottomInView, selectedCategory, searchParams]);
+  }, [bottomInView, selectedCategory, categoryParam]);
 
   const navigate = useNavigate();
 
   const reset = () => {
     dispatch(setSelectedCategory(null));
-    navigate(`/products?category=null`);
+    searchParam.set(searchParams.CATEGORY, selectedCategory);
+    navigate(`/products`);
   };
 
   const clickOnCategories = (category) => {
@@ -116,7 +116,7 @@ const Products = () => {
         <div className="w-full">
           <div className="flex items-center justify-center my-8 gap-4">
             <ButtonWithIcon
-              config={{ icon: "RxCross1", color: "#e75454" }}
+              config={{ icon: "RxCross1", color: "bg-red-600" }}
               item={{ name: "Reset" }}
               clickButton={() => reset()}
             />
@@ -125,7 +125,7 @@ const Products = () => {
                 key={index}
                 config={categoriesConfig[item?.slug]}
                 item={item}
-                isActive={searchParams.get("category") === item?.slug}
+                isActive={categoryParam === item?.slug}
                 clickButton={() => clickOnCategories(item?.slug)}
               />
             ))}

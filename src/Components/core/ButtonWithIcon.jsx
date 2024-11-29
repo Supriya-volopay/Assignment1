@@ -10,11 +10,12 @@ const ButtonWithIcon = ({ config, item, clickButton, isActive }) => {
   return (
     <button
       className={`p-3 rounded-lg flex items-center justify-center gap-2 hover:text-white ${
+        config?.color
+      } ${
         isActive
           ? `shadow-lg shadow-neutral-500 border-2 border-neutral-500`
           : ""
       }`}
-      style={{ backgroundColor: config?.color }}
       onClick={clickButton}
     >
       {IconComponent && <IconComponent />}
