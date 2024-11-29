@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchProductsAPI,
@@ -21,25 +21,26 @@ import {
   setPagination,
   setSelectedCategory,
 } from "../store/reducers/productsReducer";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import Loading from "../Components/core/Loading";
 import ButtonWithIcon from "./core/ButtonWithIcon";
 import { useNavigate } from "react-router-dom";
+import { searchParams } from "../constants/searchParams";
 
 const headerContent = ["Product Name", "Category", "Price", "Rating", "Stock"];
 const headers = ["title", "category", "price", "rating", "stock"];
 
 const categoriesConfig = {
-  beauty: { icon: "GiLipstick", color: "pink" },
-  fragrances: { icon: "GiBrandyBottle", color: "#e8e829" },
-  furniture: { icon: "GiBed", color: "#d08484" },
-  groceries: { icon: "FaShoppingBag", color: "#9191cf" },
-  "home-decoration": { icon: "FaHome", color: "#6fc26f" },
+  beauty: { icon: "GiLipstick", color: "bg-pink-400" },
+  fragrances: { icon: "GiBrandyBottle", color: "bg-amber-400" },
+  furniture: { icon: "GiBed", color: "bg-orange-400" },
+  groceries: { icon: "FaShoppingBag", color: "bg-violet-500" },
+  "home-decoration": { icon: "FaHome", color: "bg-lime-500" },
 };
+
 const Products = () => {
   const dispatch = useDispatch();
-  const params = useParams();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParam, setSearchParam] = useSearchParams();
   const products = useSelector(productsSelector);
   const totalProducts = useSelector(totalProductsSelector);
   const productsLoading = useSelector(productsLoadingSelector);
@@ -54,64 +55,57 @@ const Products = () => {
   });
 
   useEffect(() => {
-    if (
-      bottomInView &&
-      pages.skip <= totalProducts &&
-      !Object.keys(params)?.length
-    ) {
-      dispatch(setLoading(true));
-      const timeoutId = setTimeout(() => {
-        dispatch(fetchProductsAPI({ skip: pages.skip, limit: pages.limit }));
-        dispatch(setPagination(pages.skip));
-        searchParams.set("skip", pages.skip);
-        setSearchParams(searchParams);
-        dispatch(setLoading(false));
-      }, 500);
-      return () => clearTimeout(timeoutId);
-    }
-  }, [bottomInView, selectedCategory, params?.category]);
-
-  useEffect(() => {
     dispatch(fetchCategoriesAPI());
   }, []);
 
+  const categoryParam = searchParam.get(searchParams.CATEGORY);
+
   useEffect(() => {
-    if (!selectedCategory) {
-      navigate(`/products?limit=${pages.limit}&skip=0`);
+    if (selectedCategory && categoryParam !== selectedCategory) {
+      searchParam.set(searchParams.CATEGORY, selectedCategory);
+      setSearchParam(searchParam);
     }
-    if (pages.skip <= totalProducts && selectedCategory) {
-      console.log(params?.category);
+
+    const shouldFetchByCategory = categoryParam && pages.skip <= totalProducts;
+
+    const shouldFetchProducts =
+      !categoryParam && bottomInView && pages.skip <= totalProducts;
+
+    if (shouldFetchByCategory || shouldFetchProducts) {
       dispatch(setLoading(true));
-      //UI is working well but beacuse of bottomInView this api calls 2 time, cause bottomInView changes its value 2 times
+
       const timeoutId = setTimeout(() => {
-        dispatch(
-          fetchProductByCategoriesAPI({
-            skip: pages.skip,
-            category: selectedCategory,
-            limit: pages.limit,
-          })
-        );
+        if (shouldFetchByCategory) {
+          dispatch(
+            fetchProductByCategoriesAPI({
+              skip: pages.skip,
+              category: categoryParam,
+              limit: pages.limit,
+            })
+          );
+        } else if (shouldFetchProducts) {
+          dispatch(fetchProductsAPI({ skip: pages.skip, limit: pages.limit }));
+        }
         if (bottomInView) {
           dispatch(setPagination(pages.skip));
         }
-        searchParams.set("skip", pages.skip);
-        setSearchParams(searchParams);
         dispatch(setLoading(false));
-      }, 500);
+      }, 100);
+
       return () => clearTimeout(timeoutId);
     }
-  }, [bottomInView, selectedCategory]);
+  }, [bottomInView, selectedCategory, categoryParam]);
 
   const navigate = useNavigate();
 
   const reset = () => {
     dispatch(setSelectedCategory(null));
-    navigate(`/products?limit=${pages.limit}&skip=0`);
+    searchParam.set(searchParams.CATEGORY, selectedCategory);
+    navigate(`/products`);
   };
 
   const clickOnCategories = (category) => {
     dispatch(setSelectedCategory(category));
-    navigate(`/products/${category}?limit=${pages.limit}&skip=${pages.skip}`);
   };
 
   if (productsError) {
@@ -122,7 +116,7 @@ const Products = () => {
         <div className="w-full">
           <div className="flex items-center justify-center my-8 gap-4">
             <ButtonWithIcon
-              config={{ icon: "RxCross1", color: "#e75454" }}
+              config={{ icon: "RxCross1", color: "bg-red-600" }}
               item={{ name: "Reset" }}
               clickButton={() => reset()}
             />
@@ -131,7 +125,7 @@ const Products = () => {
                 key={index}
                 config={categoriesConfig[item?.slug]}
                 item={item}
-                isActive={params?.category === item?.slug}
+                isActive={categoryParam === item?.slug}
                 clickButton={() => clickOnCategories(item?.slug)}
               />
             ))}
