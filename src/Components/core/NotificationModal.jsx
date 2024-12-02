@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 
-const Notification = ({ message, duration, bg_color, text_color }) => {
+const Notification = ({ message, duration, bgColor, textColor }) => {
   const [isVisible, setIsVisible] = useState(false);
+  console.log(message);
+  console.log(duration);
+  console.log(isVisible);
 
   useEffect(() => {
     if (message) {
@@ -16,7 +19,7 @@ const Notification = ({ message, duration, bg_color, text_color }) => {
   return (
     isVisible && (
       <div
-        className={`fixed top-4 left-4 ${bg_color} ${text_color} p-4 rounded-lg shadow-lg transition-opacity  opacity-100`}
+        className={`fixed top-4 left-4 ${bgColor} ${textColor} p-4 rounded-lg shadow-lg transition-opacity  opacity-100`}
       >
         <p>{message}</p>
       </div>

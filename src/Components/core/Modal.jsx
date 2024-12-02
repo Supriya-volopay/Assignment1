@@ -5,8 +5,6 @@ const Modal = ({ isOpen, onClose, onSave, topic, field, fieldData }) => {
   const [formData, setFormData] = useState(fieldData);
   const [isloading, setLoading] = useState(false);
 
-  if (!isOpen) return null;
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -20,6 +18,8 @@ const Modal = ({ isOpen, onClose, onSave, topic, field, fieldData }) => {
       onClose();
     }, 1000);
   };
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-[rgba(10,10,10,0.07)] bg-opacity-50">
@@ -59,7 +59,7 @@ const Modal = ({ isOpen, onClose, onSave, topic, field, fieldData }) => {
             onClick={handleSave}
             className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
           >
-            {isloading ? <Loading height="h-5" /> : "Save"}
+            {isloading ? <Loading extraClasses="h-5" /> : "Save"}
           </button>
         </div>
       </div>

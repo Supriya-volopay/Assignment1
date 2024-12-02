@@ -52,22 +52,10 @@ export const fetchCategoriesProduct = (category, skip, limit) => {
   });
 };
 
-export const updateProductAPI = (updatedProduct) => {
-  return axios.put(`${apiUrl2}/products/${updatedProduct?.id}`, {
-    title: updatedProduct?.title,
-    category: updatedProduct?.category,
-    price: updatedProduct?.price,
-    rating: updatedProduct?.rating,
-    stock: updatedProduct?.stock,
-  });
+export const updateProductAPI = (id, payload) => {
+  return axios.put(`${apiUrl2}/products/${id}`, payload);
 };
 
-export const addProductAPI = (newProduct) => {
-  return axios.post(`${apiUrl2}/products/add`, {
-    title: newProduct?.title,
-    category: newProduct?.category,
-    price: newProduct?.price,
-    rating: newProduct?.rating,
-    stock: newProduct?.stock,
-  });
+export const addProductAPI = (payload) => {
+  return axios.post(`${apiUrl2}/products/add`, payload);
 };

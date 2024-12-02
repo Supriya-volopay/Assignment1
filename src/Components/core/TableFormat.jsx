@@ -6,7 +6,7 @@ const FormateTable = ({
   tableName,
   headers,
   state,
-  isClick,
+  isClickable,
   isAction,
   action,
   onSave,
@@ -14,7 +14,7 @@ const FormateTable = ({
   const navigate = useNavigate();
 
   const handleRowClick = (row) => {
-    if (isClick) {
+    if (isClickable) {
       navigate(`/company/${row?.ticker}`);
     }
   };
@@ -38,7 +38,7 @@ const FormateTable = ({
                   key={index}
                   className="border border-gray-400 px-4 py-2 bg-white text-left font-medium text-gray-800"
                 >
-                  {header.name}
+                  {header?.name}
                 </th>
               ))}
               {isAction && (
@@ -61,7 +61,7 @@ const FormateTable = ({
                     key={colIndex}
                     className="border border-gray-400 px-4 py-2 text-left text-gray-800"
                   >
-                    {row[header.slug]}
+                    {row[header?.slug]}
                   </td>
                 ))}
                 {isAction && (
@@ -76,7 +76,7 @@ const FormateTable = ({
                     >
                       {action}
                     </button>
-                    {isModalOpen && selectedRow.id === row.id && (
+                    {isModalOpen && selectedRow?.id === row?.id && (
                       <Modal
                         isOpen={isModalOpen}
                         onClose={() => setModalOpen(false)}

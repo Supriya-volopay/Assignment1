@@ -7,13 +7,14 @@ import {
   addProductAPI,
 } from "./axios";
 
-import {
-  setText,
-  setBgColor,
-  setTextColor,
-} from "../reducers/notificationReducer";
+// import {
+//   setText,
+//   setBgColor,
+//   setTextColor,
+// } from "../reducers/notificationReducer";
 
 import { info } from "../../constants/notification";
+import { getNotification } from "../../common/utils";
 
 const intialStateData = {
   isLoading: false,
@@ -25,6 +26,8 @@ const intialStateData = {
   selectedCategory: null,
   newProduct: null,
 };
+
+// const updateNotification = Notification({message: info.UPDATE.MESSAGE, duration: 3000, bgColor: info.UPDATE.BG_COLOR, textColor: info.UPDATE.TEXT_COLOR});
 
 const ProductsSlice = createSlice({
   name: "productsSlice",
@@ -43,7 +46,7 @@ const ProductsSlice = createSlice({
       state.products = [...state.products, ...action.payload];
     },
     appendOneProduct: (state, action) => {
-      state.products = [...state.products, action.payload];
+      state.products = [action.payload, ...state.products];
     },
     setPagination: (state, action) => {
       state.pagination.skip = action.payload + state.pagination.limit;
@@ -124,15 +127,28 @@ export const putUpdateProductAPI = createAsyncThunk(
   "products/updateProduct",
   async ({ updatedProduct }, { dispatch }) => {
     try {
-      const response = await updateProductAPI(updatedProduct);
+      const payload = {
+        title: updatedProduct?.title,
+        category: updatedProduct?.category,
+        price: updatedProduct?.price,
+        rating: updatedProduct?.rating,
+        stock: updatedProduct?.stock,
+      };
+      const response = await updateProductAPI(updatedProduct?.id, payload);
       dispatch(setUpdateProduct(response?.data));
-      dispatch(setText(info.UPDATE.MESSAGE));
-      dispatch(setBgColor(info.UPDATE.BG_COLOR));
-      dispatch(setTextColor(info.UPDATE.TEXT_COLOR));
+      getNotification({
+        message: info.UPDATE.MESSAGE,
+        duration: 3000,
+        bgColor: info.UPDATE.BG_COLOR,
+        textColor: info.UPDATE.TEXT_COLOR,
+      });
+      // dispatch(setText(info.UPDATE.MESSAGE));
+      // dispatch(setBgColor(info.UPDATE.BG_COLOR));
+      // dispatch(setTextColor(info.UPDATE.TEXT_COLOR));
     } catch (error) {
-      dispatch(setText(info.ERROR.MESSAGE));
-      dispatch(setBgColor(info.ERROR.BG_COLOR));
-      dispatch(setTextColor(info.ERROR.TEXT_COLOR));
+      // dispatch(setText(info.ERROR.MESSAGE));
+      // dispatch(setBgColor(info.ERROR.BG_COLOR));
+      // dispatch(setTextColor(info.ERROR.TEXT_COLOR));
       console.log("Error fetching data:", error);
       throw error;
     }
@@ -143,15 +159,22 @@ export const postAddProductAPI = createAsyncThunk(
   "products/addProduct",
   async ({ newProduct }, { dispatch }) => {
     try {
-      const response = await addProductAPI(newProduct);
+      const payload = {
+        title: newProduct?.title,
+        category: newProduct?.category,
+        price: newProduct?.price,
+        rating: newProduct?.rating,
+        stock: newProduct?.stock,
+      };
+      const response = await addProductAPI(payload);
       dispatch(appendOneProduct(response?.data));
-      dispatch(setText(info.ADD.MESSAGE));
-      dispatch(setBgColor(info.ADD.BG_COLOR));
-      dispatch(setTextColor(info.ADD.TEXT_COLOR));
+      // dispatch(setText(info.ADD.MESSAGE));
+      // dispatch(setBgColor(info.ADD.BG_COLOR));
+      // dispatch(setTextColor(info.ADD.TEXT_COLOR));
     } catch (error) {
-      dispatch(setText(info.ERROR.MESSAGE));
-      dispatch(setBgColor(info.ERROR.BG_COLOR));
-      dispatch(setTextColor(info.ERROR.TEXT_COLOR));
+      // dispatch(setText(info.ERROR.MESSAGE));
+      // dispatch(setBgColor(info.ERROR.BG_COLOR));
+      // dispatch(setTextColor(info.ERROR.TEXT_COLOR));
       console.log("Error fetching data:", error);
       throw error;
     }

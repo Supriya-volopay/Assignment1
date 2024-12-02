@@ -58,14 +58,14 @@ const Table = () => {
           tableName="Top Gainer"
           headers={headers}
           state={gainerData}
-          isClick={true}
+          isClickable={true}
           isAction={false}
         />
         <FormateTable
           tableName="Top Loser"
           headers={headers}
           state={loserData}
-          isClick={true}
+          isClickable={true}
           isAction={false}
         />
       </>

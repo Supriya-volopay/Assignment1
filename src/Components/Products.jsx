@@ -128,17 +128,14 @@ const Products = () => {
   useEffect(() => {
     if (newProduct?.hasOwnProperty("id")) {
       dispatch(putUpdateProductAPI({ updatedProduct: newProduct }));
-      const timeoutId = setTimeout(() => {
-        setIsInfo(true);
-      }, 2000);
-      return () => clearTimeout(timeoutId);
     } else if (newProduct) {
       dispatch(postAddProductAPI({ newProduct: newProduct }));
-      const timeoutId = setTimeout(() => {
-        setIsInfo(true);
-      }, 2000);
-      return () => clearTimeout(timeoutId);
     }
+
+    // const timeoutId = setTimeout(() => {
+    //   setIsInfo(true);
+    // }, 2000);
+    // return () => clearTimeout(timeoutId);
   }, [newProduct]);
 
   const navigate = useNavigate();
@@ -153,7 +150,7 @@ const Products = () => {
     dispatch(setSelectedCategory(category));
   };
 
-  const handleProduct = (data) => {
+  const handleUpdateAndAddProduct = (data) => {
     dispatch(setNewProduct(data));
   };
 
@@ -163,14 +160,14 @@ const Products = () => {
     return (
       <div className="overflow-y-scroll">
         <div className="w-full">
-          {isInfo && (
+          {/* {isInfo && (
             <Notification
               message={infoText}
-              bg_color={infoBgColor}
-              text_color={infoTextColor}
+              bgColor={infoBgColor}
+              textColor={infoTextColor}
               duration={3000}
             />
-          )}
+          )} */}
 
           <div className="flex items-center justify-center my-8 gap-4">
             <ButtonWithIcon
@@ -199,7 +196,7 @@ const Products = () => {
               <Modal
                 isOpen={isModalOpen}
                 onClose={() => setModalOpen(false)}
-                onSave={handleProduct}
+                onSave={handleUpdateAndAddProduct}
                 topic="Add New Product"
                 field={headers}
                 fieldData={newProductField}
@@ -210,16 +207,16 @@ const Products = () => {
             tableName="Product Page"
             headers={headers}
             state={products}
-            isClick={false}
+            isClickable={false}
             isAction={true}
             action="Update"
-            onSave={handleProduct}
+            onSave={handleUpdateAndAddProduct}
           />
           <div ref={bottomRef} className="h-12 my-5 text-center">
             {!productsLoading && pages.skip >= totalProducts
               ? "No More Products"
               : null}
-            {productsLoading ? <Loading height="h-12" /> : null}
+            {productsLoading ? <Loading extraClasses="h-12" /> : null}
             {!productsLoading && pages.skip < totalProducts
               ? "Load more..."
               : null}

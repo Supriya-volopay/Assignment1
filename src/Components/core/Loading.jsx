@@ -1,10 +1,10 @@
 import React from "react";
 import loading from "../../assets/img/loading.gif";
 
-const Loading = ({ height }) => {
+const Loading = ({ extraClasses }) => {
   return (
     <div className="w-full flex items-center justify-center">
-      <img className={`${height}`} src={loading} alt="Loading" />
+      <img className={`${extraClasses}`} src={loading} alt="Loading" />
     </div>
   );
 };
