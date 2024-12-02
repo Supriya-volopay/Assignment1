@@ -71,9 +71,9 @@ const Products = () => {
   const categories = useSelector(categoriesSelector);
   const selectedCategory = useSelector(selectedCategorySelector);
   const newProduct = useSelector(newProductSelector);
-  const text = useSelector(textSelector);
-  const bgColor = useSelector(bgColorSelector);
-  const textColor = useSelector(textColorSelector);
+  const infoText = useSelector(textSelector);
+  const infoBgColor = useSelector(bgColorSelector);
+  const infoTextColor = useSelector(textColorSelector);
 
   const { ref: bottomRef, inView: bottomInView } = useInView({
     threshold: 1,
@@ -81,6 +81,7 @@ const Products = () => {
   });
 
   const [isModalOpen, setModalOpen] = useState(false);
+  const [isInfo, setIsInfo] = useState(false);
 
   useEffect(() => {
     dispatch(fetchCategoriesAPI());
@@ -156,8 +157,6 @@ const Products = () => {
     dispatch(setNewProduct(data));
   };
 
-  const [isInfo, setIsInfo] = useState(false);
-
   if (productsError) {
     return <h1 className="text-4xl text-center">Something went wrong....</h1>;
   } else if (products) {
@@ -166,9 +165,9 @@ const Products = () => {
         <div className="w-full">
           {isInfo && (
             <Notification
-              message={text}
-              bg_color={bgColor}
-              text_color={textColor}
+              message={infoText}
+              bg_color={infoBgColor}
+              text_color={infoTextColor}
               duration={3000}
             />
           )}
