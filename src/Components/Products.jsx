@@ -1,9 +1,15 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchProductsAPI,
   fetchCategoriesAPI,
   fetchProductByCategoriesAPI,
+  putUpdateProductAPI,
+  postAddProductAPI,
+  setLoading,
+  setPagination,
+  setSelectedCategory,
+  setNewProduct,
 } from "../store/reducers/productsReducer";
 import {
   productsLoadingSelector,
@@ -13,22 +19,30 @@ import {
   productsPagesSelector,
   categoriesSelector,
   selectedCategorySelector,
+  newProductSelector,
 } from "../store/selectors/productsSelector";
 import FormateTable from "./core/TableFormat";
 import { useInView } from "react-intersection-observer";
-import {
-  setLoading,
-  setPagination,
-  setSelectedCategory,
-} from "../store/reducers/productsReducer";
 import { useSearchParams } from "react-router-dom";
 import Loading from "../Components/core/Loading";
 import ButtonWithIcon from "./core/ButtonWithIcon";
 import { useNavigate } from "react-router-dom";
 import { searchParams } from "../constants/searchParams";
+import Modal from "../Components/core/Modal";
+import Notification from "../Components/core/NotificationModal";
+import {
+  textSelector,
+  bgColorSelector,
+  textColorSelector,
+} from "../store/selectors/notificationSelector";
 
-const headerContent = ["Product Name", "Category", "Price", "Rating", "Stock"];
-const headers = ["title", "category", "price", "rating", "stock"];
+const headers = [
+  { name: "Product Name", slug: "title" },
+  { name: "Category", slug: "category" },
+  { name: "Price", slug: "price" },
+  { name: "Rating", slug: "rating" },
+  { name: "Stock", slug: "stock" },
+];
 
 const categoriesConfig = {
   beauty: { icon: "GiLipstick", color: "bg-pink-400" },
@@ -36,6 +50,14 @@ const categoriesConfig = {
   furniture: { icon: "GiBed", color: "bg-orange-400" },
   groceries: { icon: "FaShoppingBag", color: "bg-violet-500" },
   "home-decoration": { icon: "FaHome", color: "bg-lime-500" },
+};
+
+const newProductField = {
+  title: "",
+  category: "",
+  price: "",
+  rating: "",
+  stock: "",
 };
 
 const Products = () => {
@@ -48,11 +70,17 @@ const Products = () => {
   const pages = useSelector(productsPagesSelector);
   const categories = useSelector(categoriesSelector);
   const selectedCategory = useSelector(selectedCategorySelector);
+  const newProduct = useSelector(newProductSelector);
+  const text = useSelector(textSelector);
+  const bgColor = useSelector(bgColorSelector);
+  const textColor = useSelector(textColorSelector);
 
   const { ref: bottomRef, inView: bottomInView } = useInView({
     threshold: 1,
     triggerOnce: false,
   });
+
+  const [isModalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     dispatch(fetchCategoriesAPI());
@@ -96,6 +124,22 @@ const Products = () => {
     }
   }, [bottomInView, selectedCategory, categoryParam]);
 
+  useEffect(() => {
+    if (newProduct?.hasOwnProperty("id")) {
+      dispatch(putUpdateProductAPI({ updatedProduct: newProduct }));
+      const timeoutId = setTimeout(() => {
+        setIsInfo(true);
+      }, 2000);
+      return () => clearTimeout(timeoutId);
+    } else if (newProduct) {
+      dispatch(postAddProductAPI({ newProduct: newProduct }));
+      const timeoutId = setTimeout(() => {
+        setIsInfo(true);
+      }, 2000);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [newProduct]);
+
   const navigate = useNavigate();
 
   const reset = () => {
@@ -108,12 +152,27 @@ const Products = () => {
     dispatch(setSelectedCategory(category));
   };
 
+  const handleProduct = (data) => {
+    dispatch(setNewProduct(data));
+  };
+
+  const [isInfo, setIsInfo] = useState(false);
+
   if (productsError) {
     return <h1 className="text-4xl text-center">Something went wrong....</h1>;
   } else if (products) {
     return (
       <div className="overflow-y-scroll">
         <div className="w-full">
+          {isInfo && (
+            <Notification
+              message={text}
+              bg_color={bgColor}
+              text_color={textColor}
+              duration={3000}
+            />
+          )}
+
           <div className="flex items-center justify-center my-8 gap-4">
             <ButtonWithIcon
               config={{ icon: "RxCross1", color: "bg-red-600" }}
@@ -129,19 +188,39 @@ const Products = () => {
                 clickButton={() => clickOnCategories(item?.slug)}
               />
             ))}
+            <ButtonWithIcon
+              config={{ icon: "AiFillProduct", color: "bg-blue-400" }}
+              item={{ name: "Add New Product" }}
+              clickButton={(e) => {
+                e.stopPropagation();
+                setModalOpen(true);
+              }}
+            />
+            {isModalOpen && (
+              <Modal
+                isOpen={isModalOpen}
+                onClose={() => setModalOpen(false)}
+                onSave={handleProduct}
+                topic="Add New Product"
+                field={headers}
+                fieldData={newProductField}
+              />
+            )}
           </div>
           <FormateTable
             tableName="Product Page"
-            headerContent={headerContent}
             headers={headers}
             state={products}
-            click={false}
+            isClick={false}
+            isAction={true}
+            action="Update"
+            onSave={handleProduct}
           />
           <div ref={bottomRef} className="h-12 my-5 text-center">
             {!productsLoading && pages.skip >= totalProducts
               ? "No More Products"
               : null}
-            {productsLoading ? <Loading /> : null}
+            {productsLoading ? <Loading height="h-12" /> : null}
             {!productsLoading && pages.skip < totalProducts
               ? "Load more..."
               : null}

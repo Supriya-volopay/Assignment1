@@ -3,16 +3,27 @@ import {
   fetchProducts,
   fetchCategories,
   fetchCategoriesProduct,
+  updateProductAPI,
+  addProductAPI,
 } from "./axios";
+
+import {
+  setText,
+  setBgColor,
+  setTextColor,
+} from "../reducers/notificationReducer";
+
+import { info } from "../../constants/notification";
 
 const intialStateData = {
   isLoading: false,
+  isError: null,
   products: [],
   totalProduct: 0,
   pagination: { limit: 15, skip: 0, pageNo: 0 },
   categories: [],
   selectedCategory: null,
-  isError: null,
+  newProduct: null,
 };
 
 const ProductsSlice = createSlice({
@@ -22,11 +33,17 @@ const ProductsSlice = createSlice({
     setLoading: (state, action) => {
       state.isLoading = action.payload;
     },
+    setError: (state, action) => {
+      state.isError = action.payload;
+    },
     setProducts: (state, action) => {
       state.products = action.payload;
     },
     appendProducts: (state, action) => {
       state.products = [...state.products, ...action.payload];
+    },
+    appendOneProduct: (state, action) => {
+      state.products = [...state.products, action.payload];
     },
     setPagination: (state, action) => {
       state.pagination.skip = action.payload + state.pagination.limit;
@@ -42,14 +59,20 @@ const ProductsSlice = createSlice({
       state.selectedCategory = action.payload;
       state.pagination.skip = 0;
     },
-    setError: (state, action) => {
-      state.isError = action.payload;
+    setNewProduct: (state, action) => {
+      state.newProduct = action.payload;
+    },
+    setUpdateProduct: (state, action) => {
+      const newProduct = action.payload;
+      state.products = state.products.map((product) =>
+        product.id === newProduct.id ? { ...product, ...newProduct } : product
+      );
     },
   },
 });
 
 export const fetchProductsAPI = createAsyncThunk(
-  "fetchProductsAPI",
+  "products",
   async ({ skip, limit }, { dispatch }) => {
     try {
       const response = await fetchProducts(skip, limit);
@@ -67,7 +90,7 @@ export const fetchProductsAPI = createAsyncThunk(
 );
 
 export const fetchCategoriesAPI = createAsyncThunk(
-  "fetchCategoriesAPI",
+  "products/fetchCategories",
   async (param, { dispatch }) => {
     try {
       const response = await fetchCategories();
@@ -80,7 +103,7 @@ export const fetchCategoriesAPI = createAsyncThunk(
 );
 
 export const fetchProductByCategoriesAPI = createAsyncThunk(
-  "fetchProductByCategoriesAPI",
+  "products/fetchCategory/product",
   async ({ skip, category, limit }, { dispatch }) => {
     try {
       const response = await fetchCategoriesProduct(category, skip, limit);
@@ -97,15 +120,56 @@ export const fetchProductByCategoriesAPI = createAsyncThunk(
   }
 );
 
+export const putUpdateProductAPI = createAsyncThunk(
+  "products/updateProduct",
+  async ({ updatedProduct }, { dispatch }) => {
+    try {
+      const response = await updateProductAPI(updatedProduct);
+      dispatch(setUpdateProduct(response?.data));
+      dispatch(setText(info.UPDATE.MESSAGE));
+      dispatch(setBgColor(info.UPDATE.BG_COLOR));
+      dispatch(setTextColor(info.UPDATE.TEXT_COLOR));
+    } catch (error) {
+      dispatch(setText(info.ERROR.MESSAGE));
+      dispatch(setBgColor(info.ERROR.BG_COLOR));
+      dispatch(setTextColor(info.ERROR.TEXT_COLOR));
+      console.log("Error fetching data:", error);
+      throw error;
+    }
+  }
+);
+
+export const postAddProductAPI = createAsyncThunk(
+  "products/addProduct",
+  async ({ newProduct }, { dispatch }) => {
+    try {
+      const response = await addProductAPI(newProduct);
+      dispatch(appendOneProduct(response?.data));
+      dispatch(setText(info.ADD.MESSAGE));
+      dispatch(setBgColor(info.ADD.BG_COLOR));
+      dispatch(setTextColor(info.ADD.TEXT_COLOR));
+    } catch (error) {
+      dispatch(setText(info.ERROR.MESSAGE));
+      dispatch(setBgColor(info.ERROR.BG_COLOR));
+      dispatch(setTextColor(info.ERROR.TEXT_COLOR));
+      console.log("Error fetching data:", error);
+      throw error;
+    }
+  }
+);
+
 export const {
   setLoading,
   setProducts,
   setError,
   setTotalProducts,
   appendProducts,
+  appendOneProduct,
   setPagination,
   setCategories,
   setSelectedCategory,
+  setUpdateProduct,
+  setNewProduct,
 } = ProductsSlice.actions;
 
 export default ProductsSlice.reducer;
