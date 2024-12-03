@@ -5,7 +5,7 @@ import Notification from "../../Components/core/NotificationModal";
 export const getNotification = ({ message, duration, bgColor, textColor }) => {
   const config = {
     transition: Slide,
-    hideProgressBar: true,
+    hideProgressBar: false,
     icon: false,
     closeButton: false,
     autoClose: duration,

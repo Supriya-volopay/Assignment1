@@ -16,7 +16,7 @@ const Notification = ({ message, duration, bgColor, textColor }) => {
   return (
     isVisible && (
       <div
-        className={` ${bgColor} ${textColor} p-4 rounded-lg relative shadow-lg transition-opacity  opacity-100`}
+        className={`${bgColor} ${textColor} p-4 rounded-lg relative shadow-lg transition-opacity  opacity-100`}
       >
         <p>{message}</p>
       </div>
