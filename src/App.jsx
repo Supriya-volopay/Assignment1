@@ -4,10 +4,13 @@ import Table from "./Components/Table";
 import Company from "./Components/Company";
 import Error from "./Components/Error";
 import Products from "./Components/Products";
+import { ToastContainer } from "react-toastify";
 
+import "react-toastify/dist/ReactToastify.css";
 function App() {
   return (
     <BrowserRouter>
+      <ToastContainer />
       <Routes>
         <Route path="/" element={<Table />} />
         <Route path="/company/:ticker" element={<Company />} />
