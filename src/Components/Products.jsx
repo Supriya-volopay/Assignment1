@@ -29,7 +29,7 @@ import ButtonWithIcon from "./core/ButtonWithIcon";
 import { useNavigate } from "react-router-dom";
 import { searchParams } from "../constants/searchParams";
 import Modal from "../Components/core/Modal";
-import Notification from "../Components/core/NotificationModal";
+
 import {
   textSelector,
   bgColorSelector,

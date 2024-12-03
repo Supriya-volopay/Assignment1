@@ -7,14 +7,12 @@ import {
   addProductAPI,
 } from "./axios";
 
-// import {
-//   setText,
-//   setBgColor,
-//   setTextColor,
-// } from "../reducers/notificationReducer";
-
-import { info } from "../../constants/notification";
-import { getNotification } from "../../common/utils";
+import {
+  addMessage,
+  errorMessage,
+  getNotification,
+  updateMessage,
+} from "../../common/utils/getNotification";
 
 const intialStateData = {
   isLoading: false,
@@ -136,19 +134,10 @@ export const putUpdateProductAPI = createAsyncThunk(
       };
       const response = await updateProductAPI(updatedProduct?.id, payload);
       dispatch(setUpdateProduct(response?.data));
-      getNotification({
-        message: info.UPDATE.MESSAGE,
-        duration: 3000,
-        bgColor: info.UPDATE.BG_COLOR,
-        textColor: info.UPDATE.TEXT_COLOR,
-      });
-      // dispatch(setText(info.UPDATE.MESSAGE));
-      // dispatch(setBgColor(info.UPDATE.BG_COLOR));
-      // dispatch(setTextColor(info.UPDATE.TEXT_COLOR));
+      getNotification(updateMessage);
     } catch (error) {
-      // dispatch(setText(info.ERROR.MESSAGE));
-      // dispatch(setBgColor(info.ERROR.BG_COLOR));
-      // dispatch(setTextColor(info.ERROR.TEXT_COLOR));
+      getNotification(errorMessage);
+
       console.log("Error fetching data:", error);
       throw error;
     }
@@ -168,13 +157,9 @@ export const postAddProductAPI = createAsyncThunk(
       };
       const response = await addProductAPI(payload);
       dispatch(appendOneProduct(response?.data));
-      // dispatch(setText(info.ADD.MESSAGE));
-      // dispatch(setBgColor(info.ADD.BG_COLOR));
-      // dispatch(setTextColor(info.ADD.TEXT_COLOR));
+      getNotification(addMessage);
     } catch (error) {
-      // dispatch(setText(info.ERROR.MESSAGE));
-      // dispatch(setBgColor(info.ERROR.BG_COLOR));
-      // dispatch(setTextColor(info.ERROR.TEXT_COLOR));
+      getNotification(errorMessage);
       console.log("Error fetching data:", error);
       throw error;
     }
