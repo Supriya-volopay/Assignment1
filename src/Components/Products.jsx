@@ -169,13 +169,13 @@ const Products = () => {
             />
           )} */}
 
-          <div className="flex items-center justify-center my-8 gap-4">
+          <div className="flex items-center justify-center gap-4 my-8">
             <ButtonWithIcon
               config={{ icon: "RxCross1", color: "bg-red-600" }}
               item={{ name: "Reset" }}
               clickButton={() => reset()}
             />
-            {categories.map((item, index) => (
+            {categories?.map((item, index) => (
               <ButtonWithIcon
                 key={index}
                 config={categoriesConfig[item?.slug]}
